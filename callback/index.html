@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Potato Merge Uploader - Autorisation</title>
+<style>body{font-family:system-ui,sans-serif;max-width:42rem;margin:2rem auto;padding:0 1rem;line-height:1.55;color:#222}
+code{display:block;padding:.8rem;background:#f3f3f3;border-radius:6px;word-break:break-all}button{margin-top:.8rem;padding:.5rem 1rem;font-size:1rem}</style>
+</head><body>
+<h1>Autorisation TikTok</h1>
+<p id="message">Lecture de la réponse…</p>
+<code id="command" hidden></code>
+<button id="copy" type="button" hidden>Copier la commande</button>
+<script>
+// Shows the command that finishes `tools/tiktok.py auth`; the code never leaves this page.
+const params = new URLSearchParams(location.search);
+const message = document.getElementById("message");
+const command = document.getElementById("command");
+const copy = document.getElementById("copy");
+if (params.get("code")) {
+  const pageUrl = location.origin + location.pathname + location.search;
+  command.textContent = `python tools/tiktok.py auth "${pageUrl}"`;
+  message.textContent = "Code reçu. Colle cette commande dans le terminal (le code expire vite) :";
+  command.hidden = copy.hidden = false;
+  copy.addEventListener("click", () => {
+    navigator.clipboard.writeText(command.textContent)
+      .then(() => { copy.textContent = "Copié"; })
+      .catch(() => { copy.textContent = "Copie impossible : sélectionne le texte"; });
+  });
+} else {
+  message.textContent = `Pas de code dans l'adresse. Erreur TikTok : ${params.get("error") || "aucune"} ${params.get("error_description") || ""}`;
+}
+</script>
+</body></html>
